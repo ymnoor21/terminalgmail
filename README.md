@@ -21,3 +21,6 @@ Run `mygmail --help` or `mygmail -h` to see the command line usage.
 3. `mygmail -q "from:John Doe" -d "Super Important"` (using custom directory "Super Important").
 4. `mygmail -d "Amazon"` (My custom directory for all Amazon related emails.
 
+# Author
+Yamin Noor
+
