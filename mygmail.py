@@ -32,9 +32,7 @@ def main():
     threads = []
     currThread = ''
 
-    if not results:
-        print ('No messages found.')
-    else:
+    if results:
         for message in results:
             rawData = GetMessage(service, 'me',
                                  message['id'])
