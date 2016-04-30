@@ -19,4 +19,5 @@ Run `mygmail --help` or `mygmail -h` to see the command line usage.
 1. `mygmail` (by `-q` defaults to `is:unread` and `-d` defaults to `INBOX`).
 2. `mygmail -q "is:unread from:someuser@gmail.com" -d INBOX`.
 3. `mygmail -q "from:John Doe" -d "Super Important"` (using custom directory "Super Important").
+4. `mygmail -d "Amazon"` (My custom directory for all Amazon related emails.
 
