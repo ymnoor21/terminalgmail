@@ -1,5 +1,5 @@
 # Terminal Gmail
-Fetch your gmail from your terminal.
+Fetch your gmail email(s) from terminal.
 
 # Installation
 1. Use this link to install & setup <a target="_blank"  href='https://developers.google.com/gmail/api/quickstart/python#step_2_install_the_google_client_library'>Gmail API</a>.
