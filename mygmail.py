@@ -25,8 +25,13 @@ def main():
     except IndexError:
         path = 'INBOX'
 
+    try:
+        char_count = int(sys.argv[3])
+    except IndexError:
+        char_count = 100
+
     results = ListAllMessages(service, 'me', query, [path])
-    rawData = {}
+    messageDict = {}
 
     messages = []
     threads = []
@@ -34,15 +39,16 @@ def main():
 
     if results:
         for message in results:
-            rawData = GetMessage(service, 'me',
-                                 message['id'])
+            messageDict = GetMessage(service, 'me',
+                                     message['id'])
 
-            headers = rawData['payload']['headers']
+            headers = messageDict['payload']['headers']
             currThread = message['threadId']
 
             if currThread not in threads:
                 info = []
                 info = GetFromAndTime(headers)
+                info['data'] = messageDict['data'][:char_count]
                 messages.append(info)
                 threads.append(currThread)
 
@@ -56,15 +62,27 @@ def main():
     print (len(display_init_msg) * "-")
 
     if msg_len > 0:
+        seq = 1
         for message in messages:
             from_str = message['from']
             date_str = message['date'].__str__()
             subject_str = message['subject']\
                 if message['subject'] else "(No Subject)"
 
-            print ("+ From: " + from_str +
+            msg_str = message['data']\
+                if message['data'] else "(No Message)"
+
+            email_str = "\nEmail: " + str(seq)
+            print (email_str)
+            print (len(email_str) * "-")
+
+            print ("\n+ From: " + from_str +
                    ", at " + date_str + "\n" +
-                   "  Sub: " + subject_str + "\n\n")
+                   "  Sub: " + subject_str + "\n" +
+                   "  Msg: " + msg_str + "\n" +
+                   "--------------------------\n")
+
+            seq += 1
 
 if __name__ == '__main__':
     main()

@@ -2,10 +2,14 @@
 
 dirIds='INBOX'
 q='is:unread'
+charCounts=100
 
 function usage
 {
-    echo "usage: mygmail [[[-q is:unread ] [-d INBOX]] | [-h]]"
+    echo "usage: mygmail [[[-q is:unread ] [-d INBOX] [-cc 100]] | [-h]]"
+    echo "-q = query you want gmail to filter"
+    echo "-d = directory you want search"
+    echo "-cc = characters count"
 }
 
 while [ "$1" != "" ]; do
@@ -22,6 +26,12 @@ while [ "$1" != "" ]; do
                 dirIds=$1
             fi
             ;;
+        -cc | --ccount )
+            shift
+            if [ ! -z "$1" ]; then
+                charCounts=$1
+            fi
+            ;;
         -h | --help )
             usage
             exit
@@ -34,5 +44,5 @@ while [ "$1" != "" ]; do
 done
 
 PYTHON=`which python`
-$PYTHON ~/Programming/Python/terminalgmail/mygmail.py "$q" "$dirIds"
+$PYTHON /Users/yamin/Programming/Python/terminalgmail/mygmail.py "$q" "$dirIds" "$charCounts"
 

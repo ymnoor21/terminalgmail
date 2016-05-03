@@ -5,7 +5,7 @@ Fetch your gmail email(s) from terminal.
 1. Use this link to install & setup <a target="_blank"  href='https://developers.google.com/gmail/api/quickstart/python#step_2_install_the_google_client_library'>Gmail API</a>.
 2. Edit `mygmail.sh` file to setup the correct location of `mygmail.py` file at the bottom.
 3. Now, Run this command in your terminal: `python mygmail.py`. It will pop up a browser window to ask for your permission to access gmail. Allow it to access.
-4. Once Step 2 is done, you're ready to run. Run `python mygmail.py` to test again. If it doesn't throw any error (Sometime you need to install additional python libraries depending on your python setup) you're ready to go.
+4. Once Step 3 is done, you're ready to run. Run `python mygmail.py` to test again. If it doesn't throw any error (Sometime you need to install additional python libraries depending on your python setup) you're ready to go.
 5. Now, symlink this `mygmail.py` file to a shortcut command by running this command: `ln -s /path/to/your/mygmail.py /usr/local/bin/mygmail`.
 6. Once done, restart your terminal and run `mygmail`.
 
@@ -19,4 +19,8 @@ Run `mygmail --help` or `mygmail -h` to see the command line usage.
 1. `mygmail` (by `-q` defaults to `is:unread` and `-d` defaults to `INBOX`).
 2. `mygmail -q "is:unread from:someuser@gmail.com" -d INBOX`.
 3. `mygmail -q "from:John Doe" -d "Super Important"` (using custom directory "Super Important").
+4. `mygmail -d "Amazon"` (My custom directory for all Amazon related emails.
+
+# Author
+Yamin Noor
 

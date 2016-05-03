@@ -3,7 +3,6 @@
 
 from apiclient import errors
 import base64
-import email
 import dateutil.parser
 
 
@@ -74,18 +73,32 @@ def GetMessage(service, user_id, msg_id):
     Returns:
         A Message.
     """
+    message = []
+
     if not user_id:
         user_id = 'me'
 
     try:
         message = service.users().\
             messages().\
-            get(userId=user_id, id=msg_id)\
+            get(userId=user_id, id=msg_id,
+                format='full')\
             .execute()
 
-        return message
+        message['data'] = ''
+
+        for part in message['payload']['parts']:
+            # 'text/html'
+            if part['mimeType'] == 'text/plain':
+                message['data'] = base64.urlsafe_b64decode(
+                    part['body']['data'].encode('ascii')
+                ).decode('latin-1')
+                break
+
     except errors.HttpError, error:
         print 'An error occurred: %s' % error
+
+    return message
 
 
 def GetFromAndTime(headers):
@@ -113,7 +126,7 @@ def GetFromAndTime(headers):
     data = {
         'from': hFrom,
         'date': hDate,
-        'subject': hSubject
+        'subject': hSubject,
     }
 
     return data
