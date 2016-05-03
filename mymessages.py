@@ -87,13 +87,22 @@ def GetMessage(service, user_id, msg_id):
 
         message['data'] = ''
 
-        for part in message['payload']['parts']:
-            # 'text/html'
-            if part['mimeType'] == 'text/plain':
-                message['data'] = base64.urlsafe_b64decode(
-                    part['body']['data'].encode('ascii')
-                ).decode('latin-1')
-                break
+        parts = []
+
+        try:
+            parts = message['payload']['parts']
+            for part in parts:
+                # 'text/html'
+                if part['mimeType'] == 'text/plain':
+                    message['data'] = base64.urlsafe_b64decode(
+                        part['body']['data'].encode('ascii')
+                    ).decode('latin-1')
+                    break
+        except KeyError:
+            message['data'] = base64.urlsafe_b64decode(
+                message['payload']['body']['data']
+                .encode('ascii')
+            ).decode('latin-1')
 
     except errors.HttpError, error:
         print 'An error occurred: %s' % error
