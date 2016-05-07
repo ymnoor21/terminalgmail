@@ -49,5 +49,5 @@ while [ "$1" != "" ]; do
 done
 
 PYTHON=`which python`
-$PYTHON /Users/yamin/Programming/Python/terminalgmail/mygmail.py "$q" "$dirIds" "$charCounts"
+$PYTHON ~/Programming/Python/terminalgmail/mygmail.py "$q" "$dirIds" "$charCounts"
 
