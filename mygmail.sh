@@ -12,6 +12,11 @@ function usage
     echo "-cc = characters count"
 }
 
+if [ "$#" -eq 0 ]; then
+    dirIds='ALL'
+    q='is:unread'
+fi
+
 while [ "$1" != "" ]; do
     case $1 in
         -q | --query )
