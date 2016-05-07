@@ -33,7 +33,7 @@ def ListAllMessages(service, user_id='me', query='', path_name=[]):
                     ids.append(label['id'])
 
         if not ids:
-            print ("Error with finding path name supplied.")
+            raise Exception("Error with finding path name supplied.")
 
         response = service.users()\
             .messages()\
@@ -91,17 +91,24 @@ def GetMessage(service, user_id, msg_id):
 
         try:
             parts = message['payload']['parts']
-            for part in parts:
-                # 'text/html'
-                if part['mimeType'] == 'text/plain':
-                    message['data'] = base64.urlsafe_b64decode(
-                        part['body']['data'].encode('ascii')
-                    ).decode('latin-1')
+            for obj in parts:
+                message['data'] = obj['body'].get('data', '')
+
+                if not message['data']:
+                    for part in obj['parts']:
+                        if part['body']['data']:
+                            message['data'] = part['body']['data']
+                            break
+
+                if message['data']:
                     break
+
         except KeyError:
+            message['data'] = message['payload']['body'].get('data', '')
+
+        if message['data']:
             message['data'] = base64.urlsafe_b64decode(
-                message['payload']['body']['data']
-                .encode('ascii')
+                message['data'].encode('ascii')
             ).decode('latin-1')
 
     except errors.HttpError, error:
