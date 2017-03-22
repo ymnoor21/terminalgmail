@@ -30,94 +30,113 @@ def main():
     except IndexError:
         char_count = 100
 
-    if path == 'ALL':
+    try:
+        labels = True if str(sys.argv[4]) == 'true' else False
+    except IndexError:
+        labels = False
+
+    if labels:
         results = service.users().labels().list(userId='me').execute()
         labels = results.get('labels', [])
 
-        for label in labels:
-            try:
-                results = ListAllMessages(
-                    service, 'me', query, [label['name']]
-                )
+        if len(labels) > 0:
+            num = 1
+            for label in labels:
+                label_info = service.users().labels().get(
+                    userId='me', id=label['id']).execute()
 
-                if results:
-                    msg_count = 0
-                    threads = []
-
-                    for message in results:
-                        if message['threadId'] not in threads:
-                            msg_count += 1
-                            threads.append(message['threadId'])
-
-                    unique_messages = len(threads)
-
-                    if unique_messages > 0:
-                        print ("{0} unread message(s) in {1}"
-                               .format(unique_messages, label['name']))
-
-            except Exception as error:
-                print (label['name'] + ': ' + str(error))
+                print("{}. {} ({})".format(
+                    num, label['name'], label_info['messagesUnread']))
+                num += 1
 
     else:
-        try:
-            results = ListAllMessages(service, 'me', query, [path])
-            messageDict = {}
+        if path == 'ALL':
+            results = service.users().labels().list(userId='me').execute()
+            labels = results.get('labels', [])
 
-            messages = []
-            threads = []
-            currThread = ''
+            for label in labels:
+                try:
+                    results = ListAllMessages(
+                        service, 'me', query, [label['name']]
+                    )
 
-            if results:
-                for message in results:
-                    messageDict = GetMessage(service, 'me',
-                                             message['id'])
+                    if results:
+                        msg_count = 0
+                        threads = []
 
-                    msgData = ''
-                    msgData = messageDict['data']
+                        for message in results:
+                            if message['threadId'] not in threads:
+                                msg_count += 1
+                                threads.append(message['threadId'])
 
-                    headers = messageDict['payload']['headers']
-                    currThread = message['threadId']
+                        unique_messages = len(threads)
 
-                    if currThread not in threads:
-                        info = []
-                        info = GetFromAndTime(headers)
-                        info['data'] = msgData[:char_count]
-                        messages.append(info)
-                        threads.append(currThread)
+                        if unique_messages > 0:
+                            print("{0} unread message(s) in {1}"
+                                  .format(unique_messages, label['name']))
 
-            msg_len = len(messages)
+                except Exception as error:
+                    print(label['name'] + ': ' + str(error))
+        else:
+            try:
+                results = ListAllMessages(service, 'me', query, [path])
+                messageDict = {}
 
-            display_init_msg = "\nFetching " +\
-                               str(msg_len) +\
-                               " email(s) from " + path + "."
+                messages = []
+                threads = []
+                currThread = ''
 
-            print (display_init_msg)
-            print (len(display_init_msg) * "-")
+                if results:
+                    for message in results:
+                        messageDict = GetMessage(service, 'me',
+                                                 message['id'])
 
-            if msg_len > 0:
-                seq = 1
-                for message in messages:
-                    from_str = message['from']
-                    date_str = message['date'].__str__()
-                    subject_str = message['subject']\
-                        if message['subject'] else "(No Subject)"
+                        msgData = ''
+                        msgData = messageDict['data']
 
-                    msg_str = message['data']\
-                        if message['data'] else "(No Message)"
+                        headers = messageDict['payload']['headers']
+                        currThread = message['threadId']
 
-                    email_str = "\nEmail: " + str(seq)
-                    print (email_str)
-                    print (len(email_str) * "-")
+                        if currThread not in threads:
+                            info = []
+                            info = GetFromAndTime(headers)
+                            info['data'] = msgData[:char_count]
+                            messages.append(info)
+                            threads.append(currThread)
 
-                    print ("\n+ From: " + from_str +
-                           ", at " + date_str + "\n" +
-                           "  Sub: " + subject_str + "\n" +
-                           "  Msg: " + msg_str + "\n" +
-                           "--------------------------\n")
+                msg_len = len(messages)
 
-                    seq += 1
-        except Exception as error:
-            print (path + ': ' + str(error))
+                display_init_msg = "\nFetching " +\
+                                   str(msg_len) +\
+                                   " email(s) from " + path + "."
+
+                print(display_init_msg)
+                print(len(display_init_msg) * "-")
+
+                if msg_len > 0:
+                    seq = 1
+                    for message in messages:
+                        from_str = message['from']
+                        date_str = message['date'].__str__()
+                        subject_str = message['subject']\
+                            if message['subject'] else "(No Subject)"
+
+                        msg_str = message['data']\
+                            if message['data'] else "(No Message)"
+
+                        email_str = "\nEmail: " + str(seq)
+                        print(email_str)
+                        print(len(email_str) * "-")
+
+                        print("\n+ From: " + from_str +
+                              ", at " + date_str + "\n" +
+                              "  Sub: " + subject_str + "\n" +
+                              "  Msg: " + msg_str + "\n" +
+                              "--------------------------\n")
+
+                        seq += 1
+            except Exception as error:
+                print(path + ': ' + str(error))
 
 if __name__ == '__main__':
     main()
